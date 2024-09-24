@@ -19,15 +19,15 @@ jobs:
       - name: login docker hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secret.DOCKER_HUB_USERNAME }}
-          password: ${{ secret.DOCER_HUB_TOKEN }}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCER_HUB_TOKEN }}
 
       - name: Build and Push Docker image
         run: |
           docker build \
-          --build-arg BOT_TOKEN=${{secret.BOT_TOKEN}} \
-          --build-arg CHAT_ID=${{secret.CHAT_ID}} \
-          -t ${{ secret.DOCKER_HUB_USERNAME }}/milfbot:latest .
+          --build-arg BOT_TOKEN=${{secrets.BOT_TOKEN}} \
+          --build-arg CHAT_ID=${{secrets.CHAT_ID}} \
+          -t ${{ secrets.DOCKER_HUB_USERNAME }}/milfbot:latest .
           
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/milfbot:latest
           
