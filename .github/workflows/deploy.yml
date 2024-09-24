@@ -7,6 +7,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: .env
 
     steps:
       - name: checkout code
@@ -18,15 +19,15 @@ jobs:
       - name: login docker hub
         uses: docker/login-action@v3
         with:
-          username: ${{ .env.DOCKER_HUB_USERNAME }}
-          password: ${{ .env.DOCER_HUB_TOKEN }}
+          username: ${{ secret.DOCKER_HUB_USERNAME }}
+          password: ${{ secret.DOCER_HUB_TOKEN }}
 
       - name: Build and Push Docker image
         run: |
           docker build \
-          --build-arg BOT_TOKEN=${{.env.BOT_TOKEN}} \
-          --build-arg CHAT_ID=${{.env.CHAT_ID}} \
-          -t ${{ .env.DOCKER_HUB_USERNAME }}/milfbot:latest .
+          --build-arg BOT_TOKEN=${{secret.BOT_TOKEN}} \
+          --build-arg CHAT_ID=${{secret.CHAT_ID}} \
+          -t ${{ secret.DOCKER_HUB_USERNAME }}/milfbot:latest .
           
-          docker push ${{ .env.DOCKER_HUB_USERNAME }}/milfbot:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/milfbot:latest
           
