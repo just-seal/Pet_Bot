@@ -1,0 +1,8 @@
+docker build \
+    --build-arg BOT_TOKEN="${BOT_TOKEN}" \
+    --build-arg CHAT_ID="${CHAT_ID}" \
+    -t milfbot .
+
+
+# Load environment variables from .env and build the Docker image
+export $(cat .env | xargs) && docker build --build-arg BOT_TOKEN="${BOT_TOKEN}" --build-arg CHAT_ID="${CHAT_ID}" -t my-bot-image .

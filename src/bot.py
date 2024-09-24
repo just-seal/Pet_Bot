@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Используем переменные окружения для токена и ID чата
-API_TOKEN = os.getenv('BOT_TOKEN')  # Замените на 'BOT_TOKEN' если у вас другой
+API_TOKEN = os.getenv('BOT_TOKEN')
 CHAT_ID = os.getenv('CHAT_ID')
 
 bot = telebot.TeleBot(API_TOKEN)
@@ -38,7 +38,7 @@ messages = deque()
 
 # Функция для отправки приветственного сообщения при запуске
 def send_welcome_message():
-    bot.send_message(CHAT_ID, 'Бот запущен.')
+    bot.send_message(CHAT_ID, 'Работаем')
 
 # Функция для обработки текстовых сообщений
 @bot.message_handler(func=lambda message: True)
