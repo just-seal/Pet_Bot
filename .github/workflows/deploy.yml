@@ -41,7 +41,7 @@ jobs:
 
     steps:
       - name: Setup SSHpass
-        run: sudo apt-get inastall -y sshpass
+        run: sudo apt-get install -y sshpass
 
       - name: login and deploy
         run: |
