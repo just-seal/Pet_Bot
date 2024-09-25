@@ -12,6 +12,9 @@ jobs:
     environment: .env
 
     steps:
+      - name: check env
+        run: echo ${{secrets.DOCKER_HUB_USERNAME}}
+
       - name: checkout code
         uses: actions/checkout@v4
 
