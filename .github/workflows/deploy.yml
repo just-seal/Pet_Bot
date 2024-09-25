@@ -46,7 +46,7 @@ jobs:
       - name: login and deploy
         run: |
           sshpass -p ${{ secrets.SERVER_PASSWORD}} ssh -o StrictHostKeyChecking=no ${{secrets.SERVER_USER}}@${{secrets.SERVER_IP}} << 'EOF'
-          cd /home/${{secrets.SERVER_USER }}/telegram-bot
+          cd /home/${{secrets.SERVER_USER }}/MILF_bot
           
           docker stop milfbot || true
           docker rm milfbot || true
