@@ -50,6 +50,7 @@ jobs:
           
           docker stop milfbot || true
           docker rm milfbot || true
+          docker rmi -f milfbot || true
           
           docker pull ${{secrets.DOCKER_HUB_USERNAME}}/milfbot:latest
           
