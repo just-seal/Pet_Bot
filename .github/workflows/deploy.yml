@@ -34,3 +34,26 @@ jobs:
           
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/milfbot:latest
           
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: .env
+
+    steps:
+      - name: Setup SSHpass
+        run: sudo apt-get inastall -y sshpass
+
+      - name: login and deploy
+        run: |
+          sshpass -p ${{ secrets.SERVER_PASSWORD}} ssh -o StrictHostKeyChecking=no ${{secrets.SERVER_USER}}@${{secrets.SERVER_IP}} << 'EOF'
+          cd /home/${{secrets.SERVER_USER }}/telegram-bot
+          
+          docker stop milfbot || true
+          docker rm milfbot || true
+          
+          docker pull ${{secrets.DOCKER_HUB_USERNAME}}/milfbot:latest
+          
+          docker run -d --name milfbot --restart unless-stopped ${{ secrets.DOCKER_HUB_USERNAME}}/milfbot:latest
+          EOF
+        
+        
