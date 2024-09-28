@@ -48,9 +48,10 @@ jobs:
           sshpass -p ${{ secrets.SERVER_PASSWORD}} ssh -o StrictHostKeyChecking=no ${{secrets.SERVER_USER}}@${{secrets.SERVER_IP}} << 'EOF'
           cd /home/${{secrets.SERVER_USER }}/MILF_bot
           
-          docker stop milfbot || true
-          docker rm milfbot || true
-          docker rmi -f milfbot || true
+          
+          docker stop $( docker ps | grep -i "milfbot" ) || true
+          docker rm $( docker ps | grep -i "milfbot" ) || true
+          docker rmi $( docker images | grep -i "milfbot" )
           
           docker pull ${{secrets.DOCKER_HUB_USERNAME}}/milfbot:latest
           

@@ -1,15 +1,10 @@
-#########################
-#                       #
-#.  написан на telebot. #
-#                       #
-#########################
-
-
 import os
 import random
-import time
+import asyncio
 from collections import deque
-import telebot                  #если горит ошибка не трогай
+from aiogram import Bot, Dispatcher, types
+from aiogram import Router
+from aiogram.fsm.storage.memory import MemoryStorage
 from dotenv import load_dotenv
 
 # Загружаем переменные окружения из .env файла
@@ -19,7 +14,13 @@ load_dotenv()
 API_TOKEN = os.getenv('BOT_TOKEN')
 CHAT_ID = os.getenv('CHAT_ID')
 
-bot = telebot.TeleBot(API_TOKEN)
+# Инициализация бота и диспетчера
+bot = Bot(token=API_TOKEN)  # Убедитесь, что токен верный
+storage = MemoryStorage()
+dp = Dispatcher(storage=storage)
+
+# Создаем роутер
+router = Router()
 
 # Настройки реакции на флуд
 MESSAGE_THRESHOLD = 60  # Количество сообщений для реакции
@@ -37,24 +38,24 @@ responses = {
 messages = deque()
 
 # Функция для отправки приветственного сообщения при запуске
-def send_welcome_message():
-    bot.send_message(CHAT_ID, 'Работаем')
+async def send_welcome_message():
+    await bot.send_message(CHAT_ID, 'Работаем')
 
 # Функция для обработки текстовых сообщений
-@bot.message_handler(func=lambda message: True)
-def handle_message(message):
+@router.message()
+async def handle_message(message: types.Message):
     global messages
 
     # Ответы на ключевые слова
     message_text = message.text.lower()
     for keyword, response in responses.items():
         if keyword in message_text:
-            bot.reply_to(message, response)
+            await message.reply(response)
             break
 
     # Приветствие Ивана Владимировича
     if "доброе утро" in message_text and message.from_user.id == 786761078:
-        bot.reply_to(message, "Доброе утро, Иван Владимирович")
+        await message.reply("Доброе утро, Иван Владимирович")
 
     # Реакция на флуд
     messages.append((message.chat.id, message.message_id))
@@ -62,22 +63,22 @@ def handle_message(message):
     if len(messages) >= MESSAGE_THRESHOLD:
         random_message = random.choice(messages)
         chat_id, message_id = random_message
-        bot.send_message(chat_id, FRASE, reply_to_message_id=message_id)
+        await bot.send_message(chat_id, FRASE, reply_to_message_id=message_id)
         messages.clear()
 
 # Функция для сброса сообщений каждые TIMEOUT секунд
-def message_reset_loop():
+async def message_reset_loop():
     global messages
     while True:
-        time.sleep(TIMEOUT)
+        await asyncio.sleep(TIMEOUT)
         messages.clear()
 
+# Основная функция
+async def main():
+    await send_welcome_message()
+    asyncio.create_task(message_reset_loop())  # Запускаем сброс сообщений в отдельной задаче
+    dp.include_router(router)  # Включаем роутер в диспетчер
+    await dp.start_polling(bot)  # Запускаем обработчик событий
+
 if __name__ == '__main__':
-    send_welcome_message()
-    import threading
-    threading.Thread(target=message_reset_loop).start()  # Запускаем сброс сообщений в отдельном потоке
-    try:
-        bot.polling(none_stop=True)
-    except KeyboardInterrupt:
-        bot.send_message(CHAT_ID, 'Бот остановлен.')
-        print("Бот остановлен.")
+    asyncio.run(main())  # Запускаем основную функцию
