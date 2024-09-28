@@ -50,8 +50,8 @@ jobs:
           
           
           docker stop $( docker ps | grep -i "milfbot" ) || true
-          docker rm $( docker ps | grep -i "milfbot" ) || true
-          docker rmi $( docker images | grep -i "milfbot" )
+          docker rm $( docker ps -a | grep -i "milfbot" ) || true
+          docker rmi $( docker images | grep -i "milfbot" ) || true
           
           docker pull ${{secrets.DOCKER_HUB_USERNAME}}/milfbot:latest
           
