@@ -37,9 +37,21 @@ responses = {
 # Массив для хранения сообщений
 messages = deque()
 
+# Время работы бота
+start_time = None
+
 # Функция для отправки приветственного сообщения при запуске
 async def send_welcome_message():
     await bot.send_message(CHAT_ID, 'Работаем')
+
+# Функция для отправки сообщения о времени работы бота
+async def report_work_time():
+    global start_time
+    while True:
+        if start_time:
+            elapsed_time = (asyncio.get_event_loop().time() - start_time) // 3600  # Время в часах
+            await bot.send_message(CHAT_ID, f'Бот работает уже {int(elapsed_time)} часов.')
+        await asyncio.sleep(3600)  # Ожидание 1 час
 
 # Функция для обработки текстовых сообщений
 @router.message()
@@ -75,8 +87,11 @@ async def message_reset_loop():
 
 # Основная функция
 async def main():
+    global start_time
+    start_time = asyncio.get_event_loop().time()  # Запоминаем время запуска
     await send_welcome_message()
     asyncio.create_task(message_reset_loop())  # Запускаем сброс сообщений в отдельной задаче
+    asyncio.create_task(report_work_time())  # Запускаем таймер работы бота
     dp.include_router(router)  # Включаем роутер в диспетчер
     await dp.start_polling(bot)  # Запускаем обработчик событий
 
