@@ -1,4 +1,4 @@
-.env
+/src/.env
 /.venv
 /.idea
 /src/.dockerbuild
