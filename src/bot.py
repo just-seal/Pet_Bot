@@ -31,7 +31,8 @@ FRASE = "Ле, че началось да"
 responses = {
     "ало": "Хуем по лбу не дало?",
     "че": "ниче",
-    "работай": "ди нах"
+    "работай": "ди нах",
+    "ваня гей?": '<strike>нет конечно</stirke> <span class="tg-spoiler">ДА!</span>',
 }
 
 # Массив для хранения сообщений
@@ -56,13 +57,11 @@ async def report_work_time():
 # Функция для обработки текстовых сообщений
 @router.message()
 async def handle_message(message: types.Message):
-    global messages
-
     # Ответы на ключевые слова
     message_text = message.text.lower()
     for keyword, response in responses.items():
         if keyword in message_text:
-            await message.reply(response)
+            await message.reply(response, parse_mode="HTML")
             break
 
     # Приветствие Ивана Владимировича
